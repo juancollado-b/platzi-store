@@ -1,14 +1,18 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
 import { User } from '../entities/user.entity';
 import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
 
 import { Order } from '../entities/order.entity';
 import { ProductsService } from 'src/products/services/products.service';
+import config from 'src/config';
 
 @Injectable()
 export class UsersService {
-  constructor(private productsService: ProductsService) {}
+  constructor(
+    private productsService: ProductsService,
+    @Inject(config.KEY) private configService: ConfigType<typeof config>,
+  ) {}
   private counterId = 1;
   private users: User[] = [
     {
@@ -20,6 +24,9 @@ export class UsersService {
   ];
 
   findAll() {
+    const port = this.configService.port;
+    console.log('port', port);
+
     return this.users;
   }
 
